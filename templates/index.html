@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashtag Recommendation</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hashtag Recommendation System</h1>
+            
+        </header>
+
+        <div class="form-container">
+            <textarea id="content" placeholder="Enter your content here..." rows="5" required></textarea>
+            <button onclick="generateHashtags()">Generate Hashtags</button>
+            
+            <!-- Loading Spinner inside the Form Container -->
+            <div id="loading" class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Loading...</p>
+            </div>
+        </div>
+        
+
+        
+          
+
+        <div class="result">
+            <h2>Generated Hashtags</h2>
+            <ul id="hashtag-list">
+                <!-- Hashtags will be listed here -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function generateHashtags() {
+            const content = document.getElementById('content').value;
+            const loadingSpinner = document.getElementById('loading');
+            const list = document.getElementById('hashtag-list');
+            
+            // Show loading spinner inside the form container
+            loadingSpinner.style.display = 'block';
+            list.innerHTML = '';  // Clear previous results
+    
+            try {
+                const response = await fetch('/generate_hashtags/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content })
+                });
+    
+                const data = await response.json();
+                const hashtags = data.hashtags || [];
+    
+                // Hide loading spinner once response is received
+                loadingSpinner.style.display = 'none';
+    
+                // Display the generated hashtags
+                hashtags.forEach(tag => {
+                    const li = document.createElement('li');
+                    li.textContent = tag;
+                    list.appendChild(li);
+                });
+            } catch (error) {
+                console.error("Error generating hashtags:", error);
+    
+                // Hide loading spinner on error
+                loadingSpinner.style.display = 'none';
+            }
+        }
+    </script>
+    
+      
+</body>
+</html>
